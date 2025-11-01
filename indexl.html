@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视频播放器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .upload-area {
+            padding: 40px;
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-box {
+            border: 2px dashed #4b6cb7;
+            border-radius: 12px;
+            padding: 60px 40px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background-color: #f8faff;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-box:hover {
+            background-color: #edf2ff;
+            transform: translateY(-5px);
+        }
+        
+        .upload-icon {
+            font-size: 60px;
+            color: #4b6cb7;
+            margin-bottom: 20px;
+        }
+        
+        .upload-text {
+            font-size: 20px;
+            color: #4b6cb7;
+            font-weight: 500;
+        }
+        
+        .video-container {
+            width: 100%;
+            display: none;
+        }
+        
+        video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .upload-box {
+                padding: 40px 20px;
+            }
+            
+            .upload-icon {
+                font-size: 50px;
+            }
+            
+            .upload-text {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">点击或拖拽视频文件到此处</div>
+                <input type="file" id="fileInput" accept="video/*">
+            </div>
+            
+            <div class="video-container" id="videoContainer">
+                <video id="videoPlayer" controls>
+                    您的浏览器不支持 HTML5 视频播放
+                </video>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const uploadBox = document.getElementById('uploadBox');
+            const uploadArea = document.getElementById('uploadArea');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            // 点击上传区域触发文件选择
+            uploadBox.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // 拖拽上传功能
+            uploadBox.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadBox.style.backgroundColor = '#e0e7ff';
+                uploadBox.style.borderColor = '#3a559f';
+            });
+            
+            uploadBox.addEventListener('dragleave', function() {
+                uploadBox.style.backgroundColor = '#f8faff';
+                uploadBox.style.borderColor = '#4b6cb7';
+            });
+            
+            uploadBox.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadBox.style.backgroundColor = '#f8faff';
+                uploadBox.style.borderColor = '#4b6cb7';
+                
+                if (e.dataTransfer.files.length) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+            
+            // 文件选择处理
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length) {
+                    handleFile(fileInput.files[0]);
+                }
+            });
+            
+            // 处理选择的文件
+            function handleFile(file) {
+                if (!file.type.startsWith('video/')) {
+                    alert('请选择一个视频文件！');
+                    return;
+                }
+                
+                const fileURL = URL.createObjectURL(file);
+                videoPlayer.src = fileURL;
+                
+                // 隐藏上传框，显示视频
+                uploadBox.style.display = 'none';
+                videoContainer.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
